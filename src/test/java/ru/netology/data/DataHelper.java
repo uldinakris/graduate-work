@@ -28,5 +28,15 @@ public class DataHelper {
             Faker faker = new Faker(new Locale(locale));
             return new CardInfo(faker.name().username(), month, year, cardNumber, "123");
         }
+
+    }
+    public static CardInfo getApprovedCardInfo() {
+        return CardInfo.getCardInfo("ru", "4444 4444 4444 4441");
+    }
+    public static CardInfo getDeclinedCardInfo() {
+        return CardInfo.getCardInfo("ru", "4444 4444 4444 4442");
+    }
+    public static CardInfo getIncorrectCardInfo() {
+        return CardInfo.getCardInfo("ru", "4442");
     }
 }

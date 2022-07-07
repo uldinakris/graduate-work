@@ -1,86 +1,67 @@
 package ru.netology.test;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import ru.netology.data.DataHelper;
 import org.junit.jupiter.api.Test;
-import ru.netology.page.VerificationPage;
-import java.time.Duration;
-import static com.codeborne.selenide.Selenide.open;
+import ru.netology.page.StarterPage;
 
 public class BuyTourTest {
 
     @BeforeAll
     static void setUp() {
-        SelenideLogger.addListener("allure", new AllureSelenide()); }
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
 
     @AfterAll
-    static void tearDownAll() { SelenideLogger.removeListener("allure");}
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
 
     @Test
     void shouldPurchaseByCard() {
-        open("http://localhost:8080");
-        Configuration.holdBrowserOpen = true;
-        var verificationPage = new VerificationPage();
-        var cardInfo = DataHelper.CardInfo.getCardInfo("ru", "4444 4444 4444 4441");
-        verificationPage.purchaseByCard(cardInfo);
-        var successNotification = verificationPage.getSuccessNotification();
-
-        successNotification.shouldBe(Condition.visible, Duration.ofSeconds(15));
-
+        var starterPage = new StarterPage();
+        var purchasePage = starterPage.openPurchasePage();
+        var cardInfo = DataHelper.getApprovedCardInfo();
+        purchasePage.purchaseByCard(cardInfo);
+        purchasePage.checkSuccessNotification();
     }
 
     @Test
     void shouldNotPurchaseByCard() {
-        open("http://localhost:8080");
-        Configuration.holdBrowserOpen = true;
-        var verificationPage = new VerificationPage();
-        var cardInfo = DataHelper.CardInfo.getCardInfo("ru", "4444 4444 4444 4442");
-        verificationPage.purchaseByCard(cardInfo);
-        var declinedNotification = verificationPage.getDeclinedNotification();
-
-        declinedNotification.shouldBe(Condition.visible, Duration.ofSeconds(15));
-
+        var starterPage = new StarterPage();
+        var purchasePage = starterPage.openPurchasePage();
+        var cardInfo = DataHelper.getDeclinedCardInfo();
+        purchasePage.purchaseByCard(cardInfo);
+        purchasePage.checkDeclinedNotification();
     }
 
     @Test
     void shouldPurchaseOnCredit() {
-        open("http://localhost:8080");
-        Configuration.holdBrowserOpen = true;
-        var verificationPage = new VerificationPage();
-        var cardInfo = DataHelper.CardInfo.getCardInfo("ru", "4444 4444 4444 4441");
-        verificationPage.purchaseOnCredit(cardInfo);
-        var successNotification = verificationPage.getSuccessNotification();
-
-        successNotification.shouldBe(Condition.visible, Duration.ofSeconds(15));
-
+        var starterPage = new StarterPage();
+        var purchaseOnCredit = starterPage.openCreditPurchasePage();
+        var cardInfo = DataHelper.getApprovedCardInfo();
+        purchaseOnCredit.purchaseOnCredit(cardInfo);
+        purchaseOnCredit.checkSuccessNotification();
     }
 
     @Test
     void shouldNotPurchaseOnCredit() {
-        open("http://localhost:8080");
-        Configuration.holdBrowserOpen = true;
-        var verificationPage = new VerificationPage();
-        var cardInfo = DataHelper.CardInfo.getCardInfo("ru", "4444 4444 4444 4441");
-        verificationPage.purchaseOnCredit(cardInfo);
-        var declinedNotification = verificationPage.getDeclinedNotification();
-
-        declinedNotification.shouldBe(Condition.visible, Duration.ofSeconds(15));
+        var starterPage = new StarterPage();
+        var purchaseOnCredit = starterPage.openCreditPurchasePage();
+        var cardInfo = DataHelper.getDeclinedCardInfo();
+        purchaseOnCredit.purchaseOnCredit(cardInfo);
+        purchaseOnCredit.checkDeclinedNotification();
     }
 
     @Test
     void shouldNotSendForm() {
-        open("http://localhost:8080");
-        Configuration.holdBrowserOpen = true;
-        var verificationPage = new VerificationPage();
-        var cardInfo = DataHelper.CardInfo.getCardInfo("ru", "4441");
-        verificationPage.purchaseByCard(cardInfo);
-        var warningNotification = verificationPage.getWarningNotification();
-
-        warningNotification.shouldBe(Condition.visible, Duration.ofSeconds(15));
+        var starterPage = new StarterPage();
+        var purchaseOnCredit = starterPage.openCreditPurchasePage();
+        var cardInfo = DataHelper.getIncorrectCardInfo();
+        purchaseOnCredit.purchaseOnCredit(cardInfo);
+        purchaseOnCredit.checkWarningNotification();
     }
 }
