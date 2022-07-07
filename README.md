@@ -5,7 +5,6 @@
 
 
 1. Docker
-2. Node js
 3. Java 11
 
 
